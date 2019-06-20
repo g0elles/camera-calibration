@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import glob
+import json
 
 # Define the chess board rows and columns
 rows = 7
@@ -38,23 +39,38 @@ for path in glob.glob('data/left[0-1][0-9].jpg'):
         # Draw the corners on the image
         cv2.drawChessboardCorners(img, (rows, cols), corners, ret)
 
-    # Display the image
+    # Display the imagedistortion = dist.tolist()
+
     cv2.imshow('chess board', img)
     cv2.waitKey(500)
 
 # Calibrate the camera and save the results
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objectPointsArray, imgPointsArray, gray.shape[::-1], None, None)
-print(mtx)
-np.savetxt('data/calib.txt', mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs)
 
-# Print the camera calibration error
+print('dist= ', dist)
+print(type(dist))
+print('revecs', rvecs)
+print('tvecs', tvecs)
+
+# En cada elemento de la lista k se guarda un elemento de  mtx
+k = mtx.tolist()
+distortion = dist.tolist()
+
 error = 0
-
 for i in range(len(objectPointsArray)):
     imgPoints, _ = cv2.projectPoints(objectPointsArray[i], rvecs[i], tvecs[i], mtx, dist)
     error += cv2.norm(imgPointsArray[i], imgPoints, cv2.NORM_L2) / len(imgPoints)
 
-print("Total error: ", error / len(objectPointsArray))
+Error = error / len(objectPointsArray)
+
+results = {
+    "mtx": k,
+    "Error": Error,
+    "Distortion": distortion
+}
+
+with open('data/calib.json', 'w') as fp:
+    json.dump(results, fp, sort_keys=True, indent=4)
 
 # Load one of the test images
 img = cv2.imread('data/left12.jpg')
