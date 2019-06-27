@@ -1,9 +1,8 @@
 import json
-
 import numpy, cv2
 cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 800)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 800)
 patw, path = 7, 6
 objp= numpy.zeros((patw*path, 3))
 for i in range(patw*path):
