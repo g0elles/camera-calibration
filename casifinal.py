@@ -2,7 +2,7 @@ import json
 import numpy, cv2
 from datetime import datetime
 
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 patw, path = 7, 6
@@ -11,8 +11,9 @@ objp = numpy.zeros((patw * path, 3))
 for i in range(patw * path):
     objp[i, :2] = numpy.array([i % patw, i / patw], numpy.float32)
 objp_list, imgp_list = [], []
+print('objp', objp)
 
-print('Choose target:\n (ChessBoard = 1, SymmetricCircles = 2, AsymmetricCircles = 3)')
+print('Choose target:\n (ChessBoard = 1, SymmetricCircles = 2)')
 target = int(input())
 
 while 1:
@@ -26,10 +27,6 @@ while 1:
         ret, centers = cv2.findCirclesGrid(image, (patw, path), None)
         cv2.drawChessboardCorners(image, (patw, path), centers, ret)
         cv2.imshow('Find Symmetric Circles', image)
-    if target == 3:
-        ret, centers = cv2.findCirclesGrid(image, (patw, path), None, flags=cv2.CALIB_CB_ASYMMETRIC_GRID)
-        cv2.drawChessboardCorners(image, (patw, path), centers, ret)
-        cv2.imshow('Find Asymmetric Circles', image)
 
     key = cv2.waitKey(10)
     if key == 0x1b:  # ESC
@@ -48,7 +45,12 @@ while 1:
         if len(objp_list) == 10:
             break
 
-print(objp_list)
+#print(objp_list)
+
+print('objp_list', objp_list)2
+print('imgp_list', imgp_list)
+
+
 if len(objp_list) >= 3:
     K = numpy.zeros((3, 3), float)
     dist = numpy.zeros((5, 1), float)
